@@ -1,0 +1,83 @@
+---
+name: "bitcoin-deps"
+suites:
+- "precise"
+architectures:
+- "amd64"
+- "i386"
+packages:
+- "git-core"
+- "zip"
+- "faketime"
+- "psmisc"
+reference_datetime: "2011-01-30 00:00:00"
+remotes: []
+files:
+- "sigterm-mingw-w64-32bit-toolchain.tar.bz2"
+- "sigterm-mingw-w64-64bit-toolchain.tar.bz2"
+- "openssl-1.0.1h.tar.gz"
+- "zlib-1.2.8.tar.gz"
+- "libpng-1.6.12.tar.gz"
+script: |
+  #
+  export LD_PRELOAD=/usr/lib/faketime/libfaketime.so.1
+  export FAKETIME=$REFERENCE_DATETIME
+  export TZ=UTC
+  INDIR=$HOME/build
+  TEMPDIR=$HOME/tmp
+  # Input Integrity Check
+  echo "9d1c8a9836aa63e2c6adb684186cbd4371c9e9dcc01d6e3bb447abf2d4d3d093  openssl-1.0.1h.tar.gz"  | sha256sum -c
+  echo "36658cb768a54c1d4dec43c3116c27ed893e88b02ecfcb44f2166f9c0b7f2a0d  zlib-1.2.8.tar.gz"      | sha256sum -c
+  echo "73bec855f265e86cf247c8e60069338bba7f16deade54b459b6465ffa86f7076  libpng-1.6.12.tar.gz"    | sha256sum -c
+
+  #
+  INSTALLPREFIX=$HOME/staging${GBUILD_BITS}
+  BUILDDIR=$HOME/build${GBUILD_BITS}
+  if [ "$GBUILD_BITS" == "32" ]; then
+    HOST=i686-w64-mingw32
+  else
+    HOST=x86_64-w64-mingw32
+  fi
+  # Including our toolchain in PATH
+  tar -xvf "${INDIR}/sigterm-mingw-w64-${GBUILD_BITS}bit-toolchain.tar.bz2" -C /
+  export PATH=$HOME/mingw-w64-${GBUILD_BITS}bit/bin:$PATH
+  mkdir -p $INSTALLPREFIX $BUILDDIR
+  cd $BUILDDIR
+  #
+  tar xzf $INDIR/openssl-1.0.1h.tar.gz
+  cd openssl-1.0.1h
+  if [ "$GBUILD_BITS" == "32" ]; then
+    OPENSSL_TGT=mingw
+  else
+    OPENSSL_TGT=mingw64
+  fi
+  ./Configure --cross-compile-prefix=$HOST- ${OPENSSL_TGT} no-shared no-dso --openssldir=$INSTALLPREFIX
+  make
+  make install_sw
+  cd ..
+  #
+  tar xzf $INDIR/zlib-1.2.8.tar.gz
+  cd zlib-1.2.8
+  CROSS_PREFIX=$HOST- ./configure --prefix=$INSTALLPREFIX --static
+  make
+  make install
+  cd ..
+  #
+  tar xzf $INDIR/libpng-1.6.12.tar.gz
+  cd libpng-1.6.12
+  OPT="-O2"
+  CPPFLAGS="${OPT} -I$INSTALLPREFIX/include" CFLAGS="${OPT} -I$INSTALLPREFIX/include" LDFLAGS="${OPT} -L$INSTALLPREFIX/lib" ./configure --disable-shared --prefix=$INSTALLPREFIX --host=$HOST
+  make $MAKEOPTS
+  make install
+  cd ..
+  # post-process all generated libraries to be deterministic
+  # extract them to a temporary directory then re-build them deterministically
+  for LIB in $(find $INSTALLPREFIX -name \*.a); do
+      rm -rf $TEMPDIR && mkdir $TEMPDIR && cd $TEMPDIR
+      $HOST-ar xv $LIB | cut -b5- > /tmp/list.txt
+      rm $LIB
+      $HOST-ar crsD $LIB $(cat /tmp/list.txt)
+  done
+  #
+  cd $INSTALLPREFIX
+  find include lib | sort | zip -X@ $OUTDIR/abscond-deps-win${GBUILD_BITS}-gitian-r1.zip
