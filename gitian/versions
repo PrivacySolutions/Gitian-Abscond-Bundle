@@ -1,0 +1,51 @@
+ABSCONDBROWSER_VERSION=0.1
+REPUGNOLAUNCHER_VERSION=0.1
+BUNDLE_LOCALES="en"
+
+FIREFOX_VERSION=24.6.0esr
+
+# Versions
+
+OPENSSL_VER=1.0.1h
+ZLIB_VER=1.2.8
+LIBPNG_VER=1.6.12
+QT_VER=5.3
+QT5_VER=${QT_VER}.1
+BINUTILS_VER=2.24
+GCC_VER=4.7.0
+
+# Dependencies packages
+
+OPENSSL_PACKAGE=openssl-${OPENSSL_VER}.tar.gz
+ZLIB_PACKAGE=zlib-${ZLIB_VER}.tar.gz
+LIBPNG_PACKAGE=libpng-${LIBPNG_VER}.tar.gz
+QT_PACKAGE=qt-everywhere-opensource-src-${QT5_VER}.tar.gz
+BINUTILS_PACKAGE=binutils-${BINUTILS_VER}.tar.bz2
+MSVCR100_PACKAGE=msvcr100.dll
+OSXSDK_PACKAGE=apple-uni-sdk-10.6_20110407-0.flosoft1_i386.deb
+GCC_PACKAGE=gcc-${GCC_VER}.tar.bz2
+NOSCRIPT_PACKAGE=noscript_security_suite-2.6.8.22-sm+fx+fn.xpi
+
+# Hashes
+
+OPENSSL_HASH=9d1c8a9836aa63e2c6adb684186cbd4371c9e9dcc01d6e3bb447abf2d4d3d093
+ZLIB_HASH=36658cb768a54c1d4dec43c3116c27ed893e88b02ecfcb44f2166f9c0b7f2a0d
+LIBPNG_HASH=73bec855f265e86cf247c8e60069338bba7f16deade54b459b6465ffa86f7076
+QT_HASH=ba898625ba525d90a54739d2e33e4701d0bcd22d45663737b8123cd9b17b35a1
+BINUTILS_HASH=e5e8c5be9664e7f7f96e0d09919110ab5ad597794f5b1809871177a0f0f14137
+MSVCR100_HASH=1221a09484964a6f38af5e34ee292b9afefccb3dc6e55435fd3aaf7c235d9067
+OSXSDK_HASH=6602d8d5ddb371fbc02e2a5967d9bd0cd7358d46f9417753c8234b923f2ea6fc
+GCC_HASH=a680083e016f656dab7acd45b9729912e70e71bbffcbf0e3e8aa1cccf19dc9a5
+NOSCRIPT_HASH=5ec75d2f6fbf3ff7950a8eea2c7878d887ed3916aa89f99ec76b322b1e140c08
+
+# URLs
+
+OPENSSL_URL=https://sigterm.no/media/abscond/${OPENSSL_PACKAGE}
+ZLIB_URL=https://sigterm.no/media/abscond/${ZLIB_PACKAGE}
+LIBPNG_URL=https://sigterm.no/media/abscond/${LIBPNG_PACKAGE}
+QT_URL=http://download.qt-project.org/official_releases/qt/${QT_VER}/${QT5_VER}/single/${QT_PACKAGE}
+BINUTILS_URL=http://ftp.gnu.org/gnu/binutils/${BINUTILS_PACKAGE}
+OSXSDK_URL=https://launchpad.net/~flosoft/+archive/cross-apple/+files/${OSXSDK_PACKAGE}
+GCC_URL=https://ftp.gnu.org/gnu/gcc/gcc-${GCC_VER}/${GCC_PACKAGE}
+NOSCRIPT_URL=https://addons.cdn.mozilla.net/storage/public-staging/722/${NOSCRIPT_PACKAGE}
+

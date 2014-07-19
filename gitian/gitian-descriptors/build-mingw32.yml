@@ -1,0 +1,73 @@
+---
+name: "mingw-w64"
+suites:
+- "precise"
+architectures:
+- "amd64"
+- "i386"
+packages:
+- "build-essential"
+- "git-core"
+- "bzip2"
+- "tar"
+- "zip"
+- "faketime"
+- "psmisc"
+- "libgmp-dev"
+- "libmpc-dev"
+- "libmpfr-dev"
+reference_datetime: "2011-01-30 00:00:00"
+remotes:
+- "url": "git://git.code.sf.net/p/mingw-w64/mingw-w64"
+  "commit": 'HEAD'
+  "dir": "mingw-w64"
+files:
+- "binutils-2.24.tar.bz2"
+- "gcc-4.7.0.tar.bz2"
+script: |
+  #
+  export LC_ALL=C
+  export TZ=UTC
+  export INDIR=$HOME/build
+  if [ "${GBUILD_BITS}" -eq "64" ]; then
+    export TARGET=x86_64-w64-mingw32
+  else
+    export TARGET=i686-w64-mingw32
+  fi
+  tar -xvjf $INDIR/binutils-2.24.tar.bz2
+  tar -xvjf $INDIR/gcc-4.7.0.tar.bz2
+  mkdir binutils-2.24-build32
+  cd binutils-2.24-build32
+  ../binutils-2.24/configure --prefix=$HOME/mingw-w64-${GBUILD_BITS}bit --target=$TARGET
+  make
+  make install
+  cd ..
+  mkdir mingw-w64-headers32
+  cd mingw-w64-headers32
+  ../mingw-w64/mingw-w64-headers/configure --host=$TARGET --prefix=$HOME/mingw-w64-${GBUILD_BITS}bit/$TARGET --enable-sdk=all --enable-secure-api --enable-idl
+  make install
+  cd ..
+  mkdir gcc-4.7.0-mingw32
+  cd gcc-4.7.0-mingw32
+  ../gcc-4.7.0/configure --prefix=$HOME/mingw-w64-${GBUILD_BITS}bit --target=$TARGET --with-gnu-ld --with-gnu-as --enable-languages=c,c++ --disable-multilib
+  make all-gcc
+  make install-gcc
+  cd ..
+  export PATH=$HOME/mingw-w64-${GBUILD_BITS}bit/bin:$PATH
+  mkdir mingw-w64-crt32
+  cd mingw-w64-crt32
+  ../mingw-w64/mingw-w64-crt/configure --host=$TARGET --prefix=$HOME/mingw-w64-${GBUILD_BITS}bit/$TARGET
+  make
+  make install
+  cd ..
+  cd gcc-4.7.0-mingw32
+  make
+  make install
+  cd ..
+  # Disabled for now due to odd error
+  #mkdir widl32
+  #../mingw-w64/mingw-w64-tools/widl/configure --prefix=$HOME/mingw-w64-${GBUILD_BITS}bit --target=$TARGET
+  #make
+  #make install
+  mkdir -p "${OUTDIR}/bin/${GBUILD_BITS}"
+  tar -cvjf "${OUTDIR}/bin/${GBUILD_BITS}/sigterm-mingw-w64-${GBUILD_BITS}bit-toolchain.tar.bz2" $HOME/mingw-w64-${GBUILD_BITS}bit 

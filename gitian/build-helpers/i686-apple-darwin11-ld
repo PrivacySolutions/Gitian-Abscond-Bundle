@@ -1,0 +1,2 @@
+#!/bin/sh
+/usr/apple-osx/bin/i686-apple-darwin11-ld -syslibroot /usr/lib/apple/SDKs/MacOSX10.6.sdk/ -macosx_version_min 10.6 "$@"

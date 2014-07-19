@@ -1,0 +1,3 @@
+#!/bin/sh
+/usr/apple-osx/bin/apple-osx-gcc -isysroot /usr/lib/apple/SDKs/MacOSX10.6.sdk/ -mmacosx-version-min=10.6 -DMAXOSX_DEPLOYEMENT_TARGET=10.6 "$@"
+
