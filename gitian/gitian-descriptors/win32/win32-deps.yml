@@ -1,5 +1,5 @@
 ---
-name: "bitcoin-deps"
+name: "abscond-deps"
 suites:
 - "precise"
 architectures:
@@ -35,6 +35,9 @@ script: |
   BUILDDIR=$HOME/build${GBUILD_BITS}
   if [ "$GBUILD_BITS" == "32" ]; then
     HOST=i686-w64-mingw32
+    # Hardening
+    alias i686-w64-mingw32-g++="i686-w64-mingw32-g++ -Wl,--dynamicbase -Wl,--nxcompat -fstack-protector-all -pie -fPIE --param ssp-buffer-size=4 -fno-strict-overflow"
+    alias i686-w64-mingw32-gcc="i686-w64-mingw32-gcc -Wl,--dynamicbase -Wl,--nxcompat -fstack-protector-all -pie -fPIE --param ssp-buffer-size=4 -fno-strict-overflow"
   else
     HOST=x86_64-w64-mingw32
   fi
